@@ -1,10 +1,16 @@
 package se.lexicon.simon.car_management.entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
 public class ServiceHistory {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(length = 1000)
     private String history;
 
     public ServiceHistory(int id, String history) {

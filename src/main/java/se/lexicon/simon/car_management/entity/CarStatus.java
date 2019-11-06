@@ -1,19 +1,35 @@
 package se.lexicon.simon.car_management.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class CarStatus {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String status;
-    private List<Car> car;
 
-    public CarStatus(int id, String status, List<Car> car) {
+    private String status;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.DETACH,
+            CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    @JoinTable(name = "car_car_status",
+            joinColumns = @JoinColumn(name = "car_status_id"),
+            inverseJoinColumns = @JoinColumn(name = "car_id")
+    )
+    private List<Car> cars;
+
+    public CarStatus(int id, String status, List<Car> cars) {
         this.id = id;
         this.status = status;
-        this.car = car;
+        this.cars = cars;
     }
 
     public CarStatus(String status) {
@@ -23,20 +39,20 @@ public class CarStatus {
     public CarStatus() {}
 
     public void addCar(Car car){
-        if (this.car == null){
-            this.car = new ArrayList<>();
+        if (this.cars == null){
+            this.cars = new ArrayList<>();
         }
-        if (!this.car.contains(car)){
-            this.car.add(car);
+        if (!this.cars.contains(car)){
+            this.cars.add(car);
         }
     }
 
     public void removeCar(Car car){
-        if (this.car == null){
-            this.car = new ArrayList<>();
+        if (this.cars == null){
+            this.cars = new ArrayList<>();
         }
-        if (this.car.contains(car)){
-            this.car.remove(car);
+        if (this.cars.contains(car)){
+            this.cars.remove(car);
         }
     }
 
@@ -52,12 +68,12 @@ public class CarStatus {
         this.status = status;
     }
 
-    public List<Car> getCar() {
-        return car;
+    public List<Car> getCars() {
+        return cars;
     }
 
-    public void setCar(List<Car> car) {
-        this.car = car;
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
     }
 
     @Override
@@ -67,12 +83,12 @@ public class CarStatus {
         CarStatus carStatus = (CarStatus) o;
         return getId() == carStatus.getId() &&
                 Objects.equals(getStatus(), carStatus.getStatus()) &&
-                Objects.equals(getCar(), carStatus.getCar());
+                Objects.equals(getCars(), carStatus.getCars());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getStatus(), getCar());
+        return Objects.hash(getId(), getStatus(), getCars());
     }
 
     @Override
@@ -80,7 +96,7 @@ public class CarStatus {
         final StringBuilder sb = new StringBuilder("CarStatus{");
         sb.append("id=").append(id);
         sb.append(", status='").append(status).append('\'');
-        sb.append(", car=").append(car);
+        sb.append(", cars=").append(cars);
         sb.append('}');
         return sb.toString();
     }

@@ -1,23 +1,42 @@
 package se.lexicon.simon.car_management.entity;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class StorageSection {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     //example A_01
     private String section;
+
+    @ManyToOne (cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.DETACH,
+            CascadeType.MERGE},
+            fetch = FetchType.LAZY)
     private Address address;
-    private List<Car> car;
+
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.DETACH,
+            CascadeType.MERGE},
+            fetch = FetchType.LAZY,
+            mappedBy = "storageSection")
+    private List<Car> cars;
 
     public StorageSection(int id, String section, Address address, List<Car> car) {
         this.id = id;
         setSection(section);
         setAddress(address);
-        setCar(car);
+        setCars(car);
     }
 
     public StorageSection(String section, Address address) {
@@ -27,19 +46,25 @@ public class StorageSection {
     public StorageSection() {}
 
     public void addCar(Car car){
-        if (this.car == null){
-            this.car = new ArrayList<>();
+        if (cars == null){
+            cars = new ArrayList<>();
         }
-        this.car.add(car);
-        car.setStorageSection(this);
+
+        if (!cars.contains(car)){
+            cars.add(car);
+            car.setStorageSection(this);
+        }
     }
 
     public void removeCar(Car car){
-        if (this.car == null){
-            this.car = new ArrayList<>();
+        if (cars == null){
+            cars = new ArrayList<>();
         }
-        car.setStorageSection(null);
-        this.car.remove(car);
+
+        if (cars.contains(car)){
+            car.setStorageSection(null);
+            cars.remove(car);
+        }
     }
 
 
@@ -52,6 +77,9 @@ public class StorageSection {
     }
 
     public void setSection(String section) {
+        if (section == null){
+            getCars().forEach(c -> c.setStorageSection(null));
+        }
         this.section = section;
     }
 
@@ -63,12 +91,12 @@ public class StorageSection {
         this.address = address;
     }
 
-    public List<Car> getCar() {
-        return car;
+    public List<Car> getCars() {
+        return cars;
     }
 
-    public void setCar(List<Car> car) {
-        this.car = car;
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
     }
 
     @Override
@@ -79,12 +107,12 @@ public class StorageSection {
         return getId() == that.getId() &&
                 Objects.equals(getSection(), that.getSection()) &&
                 Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCar(), that.getCar());
+                Objects.equals(getCars(), that.getCars());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getSection(), getAddress(), getCar());
+        return Objects.hash(getId(), getSection(), getAddress(), getCars());
     }
 
     @Override
@@ -93,7 +121,7 @@ public class StorageSection {
         sb.append("id=").append(id);
         sb.append(", section='").append(section).append('\'');
         sb.append(", address=").append(address);
-        sb.append(", car=").append(car);
+        sb.append(", cars=").append(cars);
         sb.append('}');
         return sb.toString();
     }

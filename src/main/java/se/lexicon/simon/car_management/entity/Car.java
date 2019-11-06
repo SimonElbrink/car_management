@@ -1,19 +1,50 @@
 package se.lexicon.simon.car_management.entity;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Car {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(unique = true)
     private String regNumber;
+
     private LocalDate regDate;
     private String brandName;
 
+    @OneToOne(cascade =
+            CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "service_history_id")
     private ServiceHistory serviceHistory;
-    private List<CarStatus> carStatus;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.DETACH,
+            CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    @JoinTable(name = "car_car_status",
+            joinColumns = @JoinColumn(name = "car_id"),
+            inverseJoinColumns = @JoinColumn(name = "car_status_id")
+    )
+    private List<CarStatus> carStatuses;
+
+    @ManyToOne(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.DETACH,
+            CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "storage_id")
     private StorageSection storageSection;
 
 
@@ -23,7 +54,7 @@ public class Car {
         setRegDate(regDate);
         setBrandName(brandName);
         setServiceHistory(serviceHistory);
-        setCarStatus(carStatus);
+        setCarStatuses(carStatus);
         setStorageSection(storageSection);
     }
 
@@ -35,20 +66,20 @@ public class Car {
 
 
     public void addCarStatus(CarStatus carStatus){
-        if (this.carStatus == null){
-            this.carStatus = new ArrayList<>();
+        if (carStatuses == null){
+            carStatuses = new ArrayList<>();
         }
-        if (!this.carStatus.contains(carStatus)){
-            this.carStatus.add(carStatus);
+        if (!carStatuses.contains(carStatus)){
+            carStatuses.add(carStatus);
         }
     }
 
     public void removeCarStatus(CarStatus carStatus){
-        if (this.carStatus == null){
-            this.carStatus = new ArrayList<>();
+        if (carStatuses == null){
+            carStatuses = new ArrayList<>();
         }
-        if (this.carStatus.contains(carStatus)){
-            this.carStatus.remove(carStatus);
+        if (carStatuses.contains(carStatus)){
+            carStatuses.remove(carStatus);
         }
     }
 
@@ -89,12 +120,12 @@ public class Car {
         this.serviceHistory = serviceHistory;
     }
 
-    public List<CarStatus> getCarStatus() {
-        return carStatus;
+    public List<CarStatus> getCarStatuses() {
+        return carStatuses;
     }
 
-    public void setCarStatus(List<CarStatus> carStatus) {
-        this.carStatus = carStatus;
+    public void setCarStatuses(List<CarStatus> carStatuses) {
+        this.carStatuses = carStatuses;
     }
 
     public StorageSection getStorageSection() {
@@ -115,13 +146,13 @@ public class Car {
                 Objects.equals(getRegDate(), car.getRegDate()) &&
                 Objects.equals(getBrandName(), car.getBrandName()) &&
                 Objects.equals(getServiceHistory(), car.getServiceHistory()) &&
-                Objects.equals(getCarStatus(), car.getCarStatus()) &&
+                Objects.equals(getCarStatuses(), car.getCarStatuses()) &&
                 Objects.equals(getStorageSection(), car.getStorageSection());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getRegNumber(), getRegDate(), getBrandName(), getServiceHistory(), getCarStatus(), getStorageSection());
+        return Objects.hash(getId(), getRegNumber(), getRegDate(), getBrandName(), getServiceHistory(), getCarStatuses(), getStorageSection());
     }
 
     @Override
@@ -132,7 +163,7 @@ public class Car {
         sb.append(", regDate=").append(regDate);
         sb.append(", brandName='").append(brandName).append('\'');
         sb.append(", serviceHistory=").append(serviceHistory);
-        sb.append(", carStatus=").append(carStatus);
+        sb.append(", carStatuses=").append(carStatuses);
         sb.append(", storageSection=").append(storageSection);
         sb.append('}');
         return sb.toString();
