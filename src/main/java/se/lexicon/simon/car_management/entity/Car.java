@@ -69,6 +69,9 @@ public class Car {
         if (carStatuses == null){
             carStatuses = new ArrayList<>();
         }
+
+        if(carStatus == null) throw new IllegalArgumentException("carStatus was " + null);
+
         if (!carStatuses.contains(carStatus)){
             carStatuses.add(carStatus);
         }
@@ -78,6 +81,9 @@ public class Car {
         if (carStatuses == null){
             carStatuses = new ArrayList<>();
         }
+
+        if(carStatus == null) throw new IllegalArgumentException("carStatus was " + null);
+
         if (carStatuses.contains(carStatus)){
             carStatuses.remove(carStatus);
         }

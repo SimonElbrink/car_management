@@ -42,6 +42,9 @@ public class CarStatus {
         if (this.cars == null){
             this.cars = new ArrayList<>();
         }
+
+        if(car == null) throw new IllegalArgumentException("car was " + null);
+
         if (!this.cars.contains(car)){
             this.cars.add(car);
         }
@@ -51,6 +54,9 @@ public class CarStatus {
         if (this.cars == null){
             this.cars = new ArrayList<>();
         }
+
+        if(car == null) throw new IllegalArgumentException("car was " + null);
+
         if (this.cars.contains(car)){
             this.cars.remove(car);
         }

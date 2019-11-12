@@ -50,6 +50,8 @@ public class StorageSection {
             cars = new ArrayList<>();
         }
 
+        if(car == null) throw new IllegalArgumentException("car was " + null);
+
         if (!cars.contains(car)){
             cars.add(car);
             car.setStorageSection(this);
@@ -60,6 +62,8 @@ public class StorageSection {
         if (cars == null){
             cars = new ArrayList<>();
         }
+
+        if(car == null) throw new IllegalArgumentException("car was " + null);
 
         if (cars.contains(car)){
             car.setStorageSection(null);

@@ -15,11 +15,11 @@ public class ServiceHistory {
 
     public ServiceHistory(int id, String history) {
         this.id = id;
-        this.history = history;
+        setHistory(history);
     }
 
     public ServiceHistory(String history) {
-        this.history = history;
+        this(0, history);
     }
 
     public ServiceHistory() {}
