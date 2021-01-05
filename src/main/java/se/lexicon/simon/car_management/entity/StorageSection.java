@@ -12,7 +12,7 @@ public class StorageSection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //example A_01
+
     private String section;
 
     @ManyToOne (cascade = {

@@ -28,8 +28,8 @@ public class CarStatus {
 
     public CarStatus(int id, String status, List<Car> cars) {
         this.id = id;
-        this.status = status;
-        this.cars = cars;
+        setStatus(status);
+        setCars(cars);
     }
 
     public CarStatus(String status) {
